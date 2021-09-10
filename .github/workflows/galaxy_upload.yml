@@ -11,19 +11,35 @@ on:
 jobs:
   build:
     name: Build Collection
-
+    env:
+      AUTHOR: mihudec
+      COLLECTION_NAME: net_filters
     runs-on: ubuntu-latest
 
     steps:
       - name: Create Collections Directory
         run: |
-          mkdir -p ansible_collections/mihudec
+          mkdir -p ansible_collections/$AUTHOR
       
       - name: Checkout net_filters
         uses: actions/checkout@v2
         with:
-          path: ansible_collections/mihudec/net_filters
+          path: ansible_collections/$AUTHOR/$COLLECTION_NAME
 
       - name: Display Directory Tree
         run: |
           tree ansible_collections
+
+      - name: Get Version from 'galaxy.yml'
+        run: | 
+          echo COLLECTION_VERSION=$(grep version: ansible_collections/$AUTHOR/$COLLECTION_NAME/galaxy.yml | awk -F' ' '{print $2}') >> $GITHUB_ENV
+
+      - name: Display Collection Version
+        run: |
+          echo "Current version is $COLLECTION_VERSION"
+      
+      - name: Create Archive
+        run: |
+          cd ansible_collections
+          tar -czvf $AUTHOR-$COLLECTION_NAME-$COLLECTION_VERSION.tar.gz $AUTHOR/
+
