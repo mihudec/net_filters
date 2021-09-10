@@ -19,12 +19,12 @@ jobs:
     steps:
       - name: Create Collections Directory
         run: |
-          mkdir -p ansible_collections/$AUTHOR
+          mkdir -p ansible_collections/${AUTHOR}
       
       - name: Checkout net_filters
         uses: actions/checkout@v2
         with:
-          path: ansible_collections/$AUTHOR/$COLLECTION_NAME
+          path: ansible_collections/${AUTHOR}/${COLLECTION_NAME}
 
       - name: Display Directory Tree
         run: |
@@ -32,14 +32,14 @@ jobs:
 
       - name: Get Version from 'galaxy.yml'
         run: | 
-          echo COLLECTION_VERSION=$(grep version: ansible_collections/$AUTHOR/$COLLECTION_NAME/galaxy.yml | awk -F' ' '{print $2}') >> $GITHUB_ENV
+          echo "COLLECTION_VERSION=$(grep version: ansible_collections/${AUTHOR}/${COLLECTION_NAME}/galaxy.yml | awk -F' ' '{print $2}')" >> $GITHUB_ENV
 
       - name: Display Collection Version
         run: |
-          echo "Current version is $COLLECTION_VERSION"
+          echo "Current version is ${COLLECTION_VERSION}"
       
       - name: Create Archive
         run: |
           cd ansible_collections
-          tar -czvf $AUTHOR-$COLLECTION_NAME-$COLLECTION_VERSION.tar.gz $AUTHOR/
+          tar -czvf "${AUTHOR}-${COLLECTION_NAME}-${COLLECTION_VERSION}.tar.gz" ${AUTHOR}/
 
