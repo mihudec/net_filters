@@ -28,29 +28,22 @@ jobs:
 
       - name: Display Directory Tree
         run: |
-          tree ansible_collections
-      - name: Get Version from 'galaxy.yml'
-        run: | 
-          echo "COLLECTION_VERSION=$(grep version: ansible_collections/${{ env.AUTHOR }}/${{ env.COLLECTION_NAME }}/galaxy.yml | awk -F' ' '{print $2}')" >> $GITHUB_ENV
-      - name: Display Collection Version
-        run: |
-          echo "Current version is ${{ env.COLLECTION_VERSION }}"
-      
-      - name: Create Archive
-        run: |
-          cd ansible_collections
-          tar -czvf ${{ env.AUTHOR }}-${{ env.COLLECTION_NAME }}-${{ env.COLLECTION_VERSION }}.tar.gz ${{ env.AUTHOR }}/
-      - name: Set up Python 3.9
-        uses: actions/setup-python@v2
-        with:
-          python-version: 3.9
+          tree ansible_collections      
 
       - name: Install Pip and Ansible
         run: |
           python -m pip install --upgrade pip
           pip install ansible
+      
+      
+      - name: Build Collection
+        run: |
+          cd ansible_collections/${{ env.AUTHOR }}/${{ env.COLLECTION_NAME }}
+          echo ARCHIVE_PATH=$(ansible-galaxy collection build --force | awk -F' ' '{print $6}') >> $GITHUB_ENV
+          echo ${{ env.ARCHIVE_PATH }}
+
       - name: Upload to Galaxy
         run: |
           ansible-galaxy collection publish \
-          ansible_collections/${{ env.AUTHOR }}-${{ env.COLLECTION_NAME }}-${{ env.COLLECTION_VERSION }}.tar.gz \
+          ${{ env.ARCHIVE_PATH }} \
           --token ${{ secrets.ANSIBLE_GALAXY_TOKEN }}
