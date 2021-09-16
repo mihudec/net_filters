@@ -18,7 +18,7 @@ jobs:
       - name: Checkout net_filters
         uses: actions/checkout@v2
         with:
-          path: ansible_collections/${{ env.AUTHOR }}/${{ env.COLLECTION_NAME }}
+          path: ansible_collections/${{ env.AUTHOR }}
 
       - name: Display Directory Tree
         run: |
